@@ -1,0 +1,43 @@
+# 微信开发者工具配置（包含个人设置）
+project.private.config.json
+
+# 如果不想共享项目配置，也可以忽略
+# project.config.json
+
+# 网站地图（自动生成）
+sitemap.json
+
+# 依赖包
+miniprogram_npm/
+node_modules/
+package-lock.json
+
+# 系统文件
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日志文件
+*.log
+logs/
+
+# 环境变量
+.env
+.env.local
+.env.production
+
+# 临时文件
+*.tmp
+.cache/
+
+# 如果使用构建工具
+dist/
+build/

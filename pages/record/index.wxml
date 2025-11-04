@@ -1,0 +1,45 @@
+<view class="container">
+  <t-cell-group>
+    <t-cell title="日期" arrow>
+      <picker mode="date" value="{{date}}" bindchange="onDateChange">
+        <view>{{date}}</view>
+      </picker>
+    </t-cell>
+    
+    <t-cell title="地点/城市" arrow>
+      <t-input 
+        placeholder="请输入地点/城市" 
+        value="{{place}}" 
+        bindinput="onPlaceInput"
+      />
+    </t-cell>
+    
+    <t-cell title="参与人员" arrow>
+      <t-input 
+        placeholder="请输入参与人员（用逗号分隔）" 
+        value="{{persons}}" 
+        bindinput="onPersonsInput"
+      />
+    </t-cell>
+    
+    <t-cell title="整体评分">
+      <t-rate 
+        value="{{rate}}" 
+        bind:change="onRateChange"
+        size="24"
+        variant="filled"
+      />
+    </t-cell>
+  </t-cell-group>
+  
+  <view class="submit-button">
+    <t-button 
+      theme="primary" 
+      size="large" 
+      block 
+      bindtap="onSubmit"
+    >
+      提交
+    </t-button>
+  </view>
+</view>

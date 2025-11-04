@@ -1,0 +1,19 @@
+{
+  "pages": [
+    "pages/timeline/index",
+    "pages/record/index",
+    "pages/detail/index",
+    "pages/activity/eat/index",
+    "pages/activity/play/index",
+    "pages/activity/sight/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "时光记录",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

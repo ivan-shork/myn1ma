@@ -1,0 +1,76 @@
+<view class="container">
+  <view class="header">
+    <text class="title">时光记录详情</text>
+  </view>
+  
+  <view class="memory-info">
+    <view class="info-row">
+      <text class="label">日期：</text>
+      <text class="value">{{memory.date}}</text>
+    </view>
+    
+    <view class="info-row">
+      <text class="label">地点：</text>
+      <text class="value">{{memory.place}}</text>
+    </view>
+    
+    <view class="info-row">
+      <text class="label">参与人员：</text>
+      <text class="value">{{memory.persons.join(', ')}}</text>
+    </view>
+    
+    <view class="info-row">
+      <text class="label">评分：</text>
+      <t-rate 
+        value="{{memory.rate}}" 
+        size="20" 
+        variant="filled" 
+        disabled
+      />
+    </view>
+  </view>
+  
+  <view class="activity-section">
+    <text class="section-title">相关活动</text>
+    <view class="activity-buttons">
+      <button class="activity-button" bindtap="goToActivity" data-type="eat">
+        <t-icon name="food" size="24" />
+        <text>吃饭</text>
+      </button>
+      <button class="activity-button" bindtap="goToActivity" data-type="play">
+        <t-icon name="game" size="24" />
+        <text>玩乐</text>
+      </button>
+      <button class="activity-button" bindtap="goToActivity" data-type="sight">
+        <t-icon name="map" size="24" />
+        <text>景点</text>
+      </button>
+    </view>
+  </view>
+  
+  <view class="comments-section">
+    <text class="section-title">评论</text>
+    <view class="comments-list">
+      <block wx:for="{{memory.comments}}" wx:key="index">
+        <view class="comment-item">
+          <view class="comment-header">
+            <text class="comment-name">{{item.name}}</text>
+          </view>
+          <view class="comment-content">
+            <text>{{item.content}}</text>
+          </view>
+          <view class="comment-actions">
+            <view class="action-item">
+              <t-icon name="thumb-up" size="16" />
+              <text>{{item.like}}</text>
+            </view>
+            <view class="action-item">
+              <t-icon name="thumb-down" size="16" />
+              <text>{{item.unlike}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

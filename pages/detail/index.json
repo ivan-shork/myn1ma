@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "t-rate": "tdesign-miniprogram/rate/rate",
+    "t-icon": "tdesign-miniprogram/icon/icon"
+  },
+  "navigationBarTitleText": "时光记录详情"
+}

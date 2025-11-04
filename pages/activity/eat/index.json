@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-rate": "tdesign-miniprogram/rate/rate",
+    "t-button": "tdesign-miniprogram/button/button"
+  },
+  "navigationBarTitleText": "吃饭记录"
+}

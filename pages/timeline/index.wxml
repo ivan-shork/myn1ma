@@ -1,0 +1,36 @@
+<view class="container">
+  <view class="header">
+    <text class="title">我的时光记录</text>
+  </view>
+
+  <view class="memories-list">
+    <block wx:for="{{memories}}" wx:key="id">
+      <view class="memory-item" bindtap="goToDetail" data-id="{{item.id}}">
+        <view class="card-content">
+          <image class="memory-image" src="{{item.thumbnail}}" mode="aspectFill"></image>
+          <view class="memory-info">
+            <view class="info-row">
+              <text class="date">{{item.date}}</text>
+              <text class="place">{{item.place}}</text>
+            </view>
+            <view class="info-row">
+              <text class="persons">参与者: {{item.persons.join(', ')}}</text>
+            </view>
+            <view class="info-row">
+              <t-rate 
+                value="{{item.rate}}" 
+                size="16" 
+                variant="filled" 
+                disabled
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="add-button" bindtap="goToAdd">
+    <t-icon name="add" size="24" color="#fff" />
+  </view>
+</view>
