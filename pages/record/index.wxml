@@ -1,37 +1,47 @@
 <view class="container">
-  <t-cell-group>
-    <t-cell title="日期" arrow>
-      <picker mode="date" value="{{date}}" bindchange="onDateChange">
-        <view>{{date}}</view>
-      </picker>
-    </t-cell>
-    
-    <t-cell title="地点/城市" arrow>
-      <t-input 
-        placeholder="请输入地点/城市" 
-        value="{{place}}" 
-        bindinput="onPlaceInput"
-      />
-    </t-cell>
-    
-    <t-cell title="参与人员" arrow>
-      <t-input 
-        placeholder="请输入参与人员（用逗号分隔）" 
-        value="{{persons}}" 
-        bindinput="onPersonsInput"
-      />
-    </t-cell>
-    
-    <t-cell title="整体评分">
-      <t-rate 
-        value="{{rate}}" 
-        bind:change="onRateChange"
-        size="24"
-        variant="filled"
-      />
-    </t-cell>
-  </t-cell-group>
+  <!-- 标题区域 -->
+  <view class="header">
+    <view class="title">时光留档</view>
+  </view>
   
+  <!-- 表单区域 -->
+  <view class="form-container">
+    <t-cell-group>
+      <t-cell title="日期" hover arrow>
+        <picker mode="date" value="{{date}}" bindchange="onDateChange">
+          <view>{{date}}</view>
+        </picker>
+      </t-cell>
+      
+      <t-cell title="地点/城市" hover arrow>
+        <t-input 
+          placeholder="请输入地点/城市" 
+          value="{{place}}" 
+          bindinput="onPlaceInput"
+        />
+      </t-cell>
+      
+      <t-cell title="参与人员" hover arrow>
+        <t-input 
+          placeholder="请输入参与人员（用逗号分隔）" 
+          value="{{persons}}" 
+          bindinput="onPersonsInput"
+        />
+      </t-cell>
+      
+      <t-cell title="整体评分" hover>
+        <t-rate 
+          value="{{rate}}" 
+          bind:change="onRateChange"
+          size="28"
+          variant="filled"
+          color="#6c5ce7"
+        />
+      </t-cell>
+    </t-cell-group>
+  </view>
+  
+  <!-- 提交按钮 -->
   <view class="submit-button">
     <t-button 
       theme="primary" 
@@ -39,7 +49,7 @@
       block 
       bindtap="onSubmit"
     >
-      提交
+      保存记忆
     </t-button>
   </view>
 </view>
