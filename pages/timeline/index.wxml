@@ -1,28 +1,32 @@
 <view class="container">
-  <view class="header">
-    <text class="title">我的时光记录</text>
-  </view>
+ 
 
-  <view class="memories-list">
+  <view class="timeline-container">
     <block wx:for="{{memories}}" wx:key="id">
-      <view class="memory-item" bindtap="goToDetail" data-id="{{item.id}}">
-        <view class="card-content">
-          <image class="memory-image" src="{{item.thumbnail}}" mode="aspectFill"></image>
-          <view class="memory-info">
-            <view class="info-row">
-              <text class="date">{{item.date}}</text>
-              <text class="place">{{item.place}}</text>
-            </view>
-            <view class="info-row">
-              <text class="persons">参与者: {{item.persons.join(', ')}}</text>
-            </view>
-            <view class="info-row">
-              <t-rate 
-                value="{{item.rate}}" 
-                size="16" 
-                variant="filled" 
-                disabled
-              />
+      <view class="timeline-item">
+        <view class="timeline-line" wx:if="{{index !== memories.length - 1}}"></view>
+        <view class="timeline-dot"></view>
+        <view class="memory-content">
+          <view class="memory-date">{{item.date}}</view>
+          <view class="memory-item" bindtap="goToDetail" data-id="{{item.id}}">
+            <view class="card-content">
+              <image class="memory-image" src="{{item.thumbnail}}" mode="aspectFill"></image>
+              <view class="memory-info">
+                <view class="info-row">
+                  <text class="place">{{item.place}}</text>
+                </view>
+                <view class="info-row">
+                  <text class="persons">参与者: {{item.persons}}</text>
+                </view>
+                <view class="info-row">
+                  <t-rate 
+                    value="{{item.rate}}" 
+                    size="16" 
+                    variant="filled" 
+                    disabled
+                  />
+                </view>
+              </view>
             </view>
           </view>
         </view>

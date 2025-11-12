@@ -3,5 +3,7 @@
     "t-rate": "tdesign-miniprogram/rate/rate",
     "t-icon": "tdesign-miniprogram/icon/icon"
   },
-  "navigationBarTitleText": "时光记录详情"
+  "navigationBarTitleText": "时光记录详情",
+  "navigationStyle": "custom",
+  "componentFramework": "glass-easel"
 }

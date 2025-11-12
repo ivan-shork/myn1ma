@@ -7,5 +7,7 @@
     "t-rate": "tdesign-miniprogram/rate/rate",
     "t-button": "tdesign-miniprogram/button/button"
   },
-  "navigationBarTitleText": "景点记录"
+  "navigationBarTitleText": "景点记录",
+  "navigationStyle": "custom",
+  "componentFramework": "glass-easel"
 }

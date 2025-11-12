@@ -6,5 +6,7 @@
     "t-rate": "tdesign-miniprogram/rate/rate",
     "t-button": "tdesign-miniprogram/button/button"
   },
-  "navigationBarTitleText": "吃饭记录"
+  "navigationBarTitleText": "吃饭记录",
+  "navigationStyle": "custom",
+  "componentFramework": "glass-easel"
 }

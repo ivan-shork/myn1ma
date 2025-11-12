@@ -7,5 +7,7 @@
     "t-button": "tdesign-miniprogram/button/button",
     "t-dateTime-picker": "tdesign-miniprogram/date-time-picker/date-time-picker"
   },
-  "navigationBarTitleText": "新增记录"
+  "navigationBarTitleText": "新增记录",
+  "navigationStyle": "custom",
+  "componentFramework": "glass-easel"
 }

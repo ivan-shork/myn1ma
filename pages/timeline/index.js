@@ -15,7 +15,7 @@ Page({
         date: '2023-05-01',
         place: '北京',
         persons: ['张三', '李四'],
-        thumbnail: '/images/mock/beijing.jpg',
+        thumbnail: '/images/mock/girl.jpg',
         rate: 4.5
       },
       {
@@ -23,7 +23,7 @@ Page({
         date: '2023-04-15',
         place: '上海',
         persons: ['王五', '赵六'],
-        thumbnail: '/images/mock/shanghai.jpg',
+        thumbnail: '/images/mock/littlegirl.jpg',
         rate: 4.8
       }
     ];
