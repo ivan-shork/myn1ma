@@ -4,7 +4,7 @@
 <view class="nav-bar">
   <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
   <view class="nav-title-area">
-    <view class="nav-back" bindtap="goBack">‹</view>
+    <!-- <view class="nav-back" bindtap="goBack">‹</view> -->
     <view class="nav-title">详情</view>
   </view>
 </view>

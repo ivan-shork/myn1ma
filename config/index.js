@@ -4,5 +4,5 @@
  * useMock: false - 使用真实云数据（需要配置云开发环境）
  */
 export default {
-  useMock: true,
+  useMock: false,
 };

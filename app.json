@@ -12,14 +12,6 @@
     },
     "sitemapLocation": "sitemap.json",
     "style": "v2",
-    "renderer": "skyline",
-    "rendererOptions": {
-      "skyline": {
-        "defaultDisplayBlock": true,
-        "disableABTest": true,
-        "sdkVersionBegin": "3.0.0"
-      }
-    },
     "lazyCodeLoading": "requiredComponents",
     "usingComponents": {
       "t-icon": "tdesign-miniprogram/icon/icon",
