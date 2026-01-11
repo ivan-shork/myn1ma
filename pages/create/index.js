@@ -24,7 +24,21 @@ Page({
     ],
     submitting: false,
     statusBarHeight: 0,
-    uploadGridConfig: { column: 3 }
+    uploadGridConfig: { column: 3 },
+    // 日期时间弹窗相关
+    showDatePickerPopup: false,
+    showTimePickerPopup: false,
+    // 日期选择器数据
+    years: [],
+    months: [],
+    days: [],
+    datePickerValue: [0, 0, 0],
+    tempSelectedDate: '',
+    // 时间选择器数据
+    hours: [],
+    minutes: [],
+    timePickerValue: [0, 0],
+    tempSelectedTime: ''
   },
 
   onLoad() {
@@ -34,9 +48,54 @@ Page({
     this.setData({ statusBarHeight });
 
     // 设置默认日期为今天
+    const today = dayjs();
+    const dateStr = today.format('YYYY-MM-DD');
+    this.setData({ date: dateStr });
+
+    // 生成年份选项 - 前后10年
+    const currentYear = today.year();
+    const years = [];
+    for (let i = currentYear - 10; i <= currentYear + 10; i++) {
+      years.push(i);
+    }
+    this.setData({ years });
+
+    // 生成月份选项
+    const months = [];
+    for (let i = 1; i <= 12; i++) {
+      months.push(i);
+    }
+    this.setData({ months });
+
+    // 生成日期选项（默认31天，会根据年月动态调整）
+    const days = [];
+    for (let i = 1; i <= 31; i++) {
+      days.push(i);
+    }
+    this.setData({ days });
+
+    // 设置日期选择器的初始值（今天）
+    const initialYearIndex = 10; // 当前年份在数组中的索引
+    const initialMonthIndex = today.month(); // 0-11
+    const initialDayIndex = today.date() - 1; // 1-31，转为0-30
     this.setData({
-      date: dayjs().format('YYYY-MM-DD')
+      datePickerValue: [initialYearIndex, initialMonthIndex, initialDayIndex],
+      tempSelectedDate: dateStr
     });
+
+    // 生成小时选项
+    const hours = [];
+    for (let i = 0; i < 24; i++) {
+      hours.push(i.toString().padStart(2, '0'));
+    }
+    this.setData({ hours });
+
+    // 生成分钟选项（每15分钟一个选项）
+    const minutes = [];
+    for (let i = 0; i < 60; i += 15) {
+      minutes.push(i.toString().padStart(2, '0'));
+    }
+    this.setData({ minutes });
   },
 
   // 返回上一页
@@ -98,6 +157,152 @@ Page({
     this.setData({
       participantOptions: updatedOptions,
       participants
+    });
+  },
+
+  // 显示日期选择弹窗
+  onShowDatePicker() {
+    // 如果已有选择的日期，设置选择器位置
+    if (this.data.date) {
+      const date = dayjs(this.data.date);
+      const years = this.data.years;
+      const yearIndex = years.indexOf(date.year());
+
+      if (yearIndex !== -1) {
+        this.setData({
+          datePickerValue: [yearIndex, date.month(), date.date() - 1],
+          tempSelectedDate: this.data.date,
+          showDatePickerPopup: true
+        });
+        return;
+      }
+    }
+
+    this.setData({
+      showDatePickerPopup: true
+    });
+  },
+
+  // 关闭日期选择弹窗
+  onCloseDatePicker() {
+    this.setData({
+      showDatePickerPopup: false
+    });
+  },
+
+  // 日期弹窗可见性变化
+  onDatePickerVisibleChange(e) {
+    if (!e.detail.visible) {
+      this.setData({
+        showDatePickerPopup: false
+      });
+    }
+  },
+
+  // 日期选择器滚动变化
+  onDatePickerChange(e) {
+    const value = e.detail.value;
+    const years = this.data.years;
+    const months = this.data.months;
+
+    const year = years[value[0]];
+    const month = months[value[1]];
+    const day = value[2] + 1;
+
+    // 根据选择的年月更新天数
+    const daysInMonth = dayjs(`${year}-${month}`, 'YYYY-M').daysInMonth();
+    const newDays = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      newDays.push(i);
+    }
+
+    // 如果当前选择的日期超出了新月份的天数，调整日期
+    let adjustedDay = day;
+    if (day > daysInMonth) {
+      adjustedDay = daysInMonth;
+      value[2] = daysInMonth - 1;
+    }
+
+    this.setData({
+      days: newDays,
+      datePickerValue: value,
+      tempSelectedDate: `${year}-${month.toString().padStart(2, '0')}-${adjustedDay.toString().padStart(2, '0')}`
+    });
+  },
+
+  // 确认日期选择
+  onConfirmDate() {
+    this.setData({
+      date: this.data.tempSelectedDate,
+      showDatePickerPopup: false
+    });
+  },
+
+  // 显示时间选择弹窗
+  onShowTimePicker() {
+    // 如果已有选择的时间，设置选择器位置
+    if (this.data.time) {
+      const [hourStr, minuteStr] = this.data.time.split(':');
+      const hours = this.data.hours;
+      const minutes = this.data.minutes;
+
+      const hourIndex = hours.indexOf(hourStr);
+      const minuteIndex = minutes.indexOf(minuteStr);
+
+      if (hourIndex !== -1 && minuteIndex !== -1) {
+        this.setData({
+          timePickerValue: [hourIndex, minuteIndex],
+          tempSelectedTime: this.data.time,
+          showTimePickerPopup: true
+        });
+        return;
+      }
+    }
+
+    // 默认选择 00:00
+    this.setData({
+      timePickerValue: [0, 0],
+      tempSelectedTime: '00:00',
+      showTimePickerPopup: true
+    });
+  },
+
+  // 关闭时间选择弹窗
+  onCloseTimePicker() {
+    this.setData({
+      showTimePickerPopup: false
+    });
+  },
+
+  // 时间弹窗可见性变化
+  onTimePickerVisibleChange(e) {
+    if (!e.detail.visible) {
+      this.setData({
+        showTimePickerPopup: false
+      });
+    }
+  },
+
+  // 时间选择器滚动变化
+  onTimePickerChange(e) {
+    const value = e.detail.value;
+    const hours = this.data.hours;
+    const minutes = this.data.minutes;
+
+    const hour = hours[value[0]];
+    const minute = minutes[value[1]];
+
+    this.setData({
+      timePickerValue: value,
+      tempSelectedTime: `${hour}:${minute}`
+    });
+  },
+
+  // 确认时间选择
+  onConfirmTime() {
+    this.setData({
+      time: this.data.tempSelectedTime,
+      showTimePickerPopup: false
     });
   },
 

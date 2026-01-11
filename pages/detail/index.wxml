@@ -4,7 +4,7 @@
 <view class="nav-bar">
   <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
   <view class="nav-title-area">
-    <!-- <view class="nav-back" bindtap="goBack">‹</view> -->
+    <view class="nav-back" bindtap="goBack">‹</view>
     <view class="nav-title">详情</view>
   </view>
 </view>
@@ -95,17 +95,13 @@
               <text class="rating-name">{{person}}</text>
             </view>
             <view class="rating-selector">
-              <picker
-                mode="selector"
-                range="{{ratingOptions}}"
-                bindchange="onRatingSelect"
+              <view
+                class="rating-picker {{record.ratings[person] !== undefined ? 'has-rating' : ''}} {{record.ratings[person] <= 2 && record.ratings[person] !== undefined ? 'has-low-rating' : ''}}"
+                bindtap="onShowRatingPopup"
                 data-person="{{person}}"
-                value="{{ratingUtils.getRatingIndex(record.ratings[person])}}"
               >
-                <view class="rating-picker {{record.ratings[person] !== undefined ? 'has-rating' : ''}} {{record.ratings[person] <= 2 && record.ratings[person] !== undefined ? 'has-low-rating' : ''}}">
               {{record.ratings[person] !== undefined ? ratingLabels[record.ratings[person]] : '未评分'}}
-                </view>
-              </picker>
+              </view>
             </view>
           </view>
         </view>
@@ -159,6 +155,34 @@
     </view>
   </view>
 </scroll-view>
+
+<!-- 评分选择弹窗 -->
+<t-popup
+  visible="{{showRatingPopup}}"
+  placement="bottom"
+  bind:visible-change="onRatingPopupVisibleChange"
+  overlay-props="{{overlayProps}}"
+  close-on-overlay-click="{{true}}"
+>
+  <view class="rating-popup">
+    <view class="popup-header">
+      <text class="popup-title">选择评分 - {{currentEditingPerson}}</text>
+      <view class="popup-close" bindtap="onCloseRatingPopup">✕</view>
+    </view>
+    <view class="popup-options">
+      <view
+        class="popup-option {{item.value === currentRatingValue ? 'selected' : ''}} {{item.value <= 2 ? 'low-rating' : ''}}"
+        wx:for="{{ratingOptionsWithValues}}"
+        wx:key="value"
+        bindtap="onSelectRating"
+        data-value="{{item.value}}"
+      >
+        <text class="option-text">{{item.label}}</text>
+        <text class="option-check" wx:if="{{item.value === currentRatingValue}}">✓</text>
+      </view>
+    </view>
+  </view>
+</t-popup>
 
 <!-- 底部评论输入 -->
 <view class="comment-bar">

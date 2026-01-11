@@ -61,30 +61,20 @@
           <text class="label-text">日期</text>
           <text class="required-mark">*</text>
         </view>
-        <picker
-          mode="date"
-          value="{{date}}"
-          bindchange="onDateChange"
-        >
-          <view class="picker-box {{date ? 'has-value' : ''}}">
-            {{date || '选择日期'}}
-          </view>
-        </picker>
+        <view class="picker-box {{date ? 'has-value' : ''}}" bindtap="onShowDatePicker">
+          {{date || '选择日期'}}
+          <text class="selector-arrow-mini">›</text>
+        </view>
       </view>
       <view class="form-item-half">
         <view class="form-label">
           <text class="label-emoji">⏰</text>
           <text class="label-text">时间</text>
         </view>
-        <picker
-          mode="time"
-          value="{{time}}"
-          bindchange="onTimeChange"
-        >
-          <view class="picker-box {{time ? 'has-value' : ''}}">
-            {{time || '选择时间'}}
-          </view>
-        </picker>
+        <view class="picker-box {{time ? 'has-value' : ''}}" bindtap="onShowTimePicker">
+          {{time || '选择时间'}}
+          <text class="selector-arrow-mini">›</text>
+        </view>
       </view>
     </view>
 
@@ -145,6 +135,67 @@
   </view>
   </view>
 </scroll-view>
+
+<!-- 日期选择弹窗 -->
+<t-popup
+  visible="{{showDatePickerPopup}}"
+  placement="bottom"
+  bind:visible-change="onDatePickerVisibleChange"
+  close-on-overlay-click="{{true}}"
+>
+  <view class="date-picker-popup">
+    <view class="popup-header">
+      <view class="popup-cancel" bindtap="onCloseDatePicker">取消</view>
+      <text class="popup-title">选择日期</text>
+      <view class="popup-confirm" bindtap="onConfirmDate">确定</view>
+    </view>
+    <picker-view
+      class="date-picker-view"
+      indicator-class="picker-indicator"
+      value="{{datePickerValue}}"
+      bindchange="onDatePickerChange"
+    >
+      <picker-view-column class="picker-column">
+        <view class="picker-item" wx:for="{{years}}" wx:key="index">{{item}}年</view>
+      </picker-view-column>
+      <picker-view-column class="picker-column">
+        <view class="picker-item" wx:for="{{months}}" wx:key="index">{{item}}月</view>
+      </picker-view-column>
+      <picker-view-column class="picker-column">
+        <view class="picker-item" wx:for="{{days}}" wx:key="index">{{item}}日</view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</t-popup>
+
+<!-- 时间选择弹窗 -->
+<t-popup
+  visible="{{showTimePickerPopup}}"
+  placement="bottom"
+  bind:visible-change="onTimePickerVisibleChange"
+  close-on-overlay-click="{{true}}"
+>
+  <view class="time-picker-popup">
+    <view class="popup-header">
+      <view class="popup-cancel" bindtap="onCloseTimePicker">取消</view>
+      <text class="popup-title">选择时间</text>
+      <view class="popup-confirm" bindtap="onConfirmTime">确定</view>
+    </view>
+    <picker-view
+      class="time-picker-view"
+      indicator-class="picker-indicator"
+      value="{{timePickerValue}}"
+      bindchange="onTimePickerChange"
+    >
+      <picker-view-column class="picker-column">
+        <view class="picker-item" wx:for="{{hours}}" wx:key="index">{{item}}时</view>
+      </picker-view-column>
+      <picker-view-column class="picker-column">
+        <view class="picker-item" wx:for="{{minutes}}" wx:key="index">{{item}}分</view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</t-popup>
 
 <!-- 底部提交按钮 -->
 <view class="submit-bar">

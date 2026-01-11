@@ -40,7 +40,22 @@ Page({
     averageRatingLabel: '',
     userAvatar: '',
     userNickname: '',
-    hasUnsavedRatings: false
+    hasUnsavedRatings: false,
+    // 评分弹窗相关
+    showRatingPopup: false,
+    currentEditingPerson: '',
+    currentRatingValue: undefined,
+    ratingOptionsWithValues: [
+      { label: '夯', value: 5 },
+      { label: '顶级', value: 4 },
+      { label: '人上人', value: 3 },
+      { label: 'npc', value: 2 },
+      { label: '拉', value: 1 },
+      { label: '拉完了', value: 0 }
+    ],
+    overlayProps: {
+      duration: 300
+    }
   },
 
   onLoad(options) {
@@ -195,6 +210,72 @@ Page({
       record: newRecord,
       averageRatingLabel,
       hasUnsavedRatings: true
+    });
+  },
+
+  // 显示评分选择弹窗
+  onShowRatingPopup(e) {
+    const { person } = e.currentTarget.dataset;
+    const { record } = this.data;
+
+    // 获取当前评分值
+    const currentRatingValue = record.ratings && record.ratings[person] !== undefined
+      ? record.ratings[person]
+      : '';
+
+    this.setData({
+      showRatingPopup: true,
+      currentEditingPerson: person,
+      currentRatingValue: currentRatingValue
+    });
+  },
+
+  // 关闭评分弹窗
+  onCloseRatingPopup() {
+    this.setData({
+      showRatingPopup: false,
+      currentEditingPerson: '',
+      currentRatingValue: ''
+    });
+  },
+
+  // 弹窗可见性变化
+  onRatingPopupVisibleChange(e) {
+    if (!e.detail.visible) {
+      this.setData({
+        showRatingPopup: false,
+        currentEditingPerson: '',
+        currentRatingValue: ''
+      });
+    }
+  },
+
+  // 选择评分
+  onSelectRating(e) {
+    const { record, currentEditingPerson } = this.data;
+    const ratingValue = parseInt(e.currentTarget.dataset.value);
+
+    // 更新本地数据
+    const newRatings = {
+      ...record.ratings,
+      [currentEditingPerson]: ratingValue
+    };
+
+    const newRecord = {
+      ...record,
+      ratings: newRatings
+    };
+
+    // 计算新的平均分
+    const averageRatingLabel = this.calculateAverageRating(newRatings, record.participants);
+
+    this.setData({
+      record: newRecord,
+      averageRatingLabel,
+      hasUnsavedRatings: true,
+      showRatingPopup: false,
+      currentEditingPerson: '',
+      currentRatingValue: ''
     });
   },
 

@@ -31,6 +31,7 @@
       "t-textarea": "tdesign-miniprogram/textarea/textarea",
       "t-button": "tdesign-miniprogram/button/button",
       "t-picker": "tdesign-miniprogram/picker/picker",
+      "t-popup": "tdesign-miniprogram/popup/popup",
       "t-toast": "tdesign-miniprogram/toast/toast",
       "t-divider": "tdesign-miniprogram/divider/divider",
       "t-image": "tdesign-miniprogram/image/image",
