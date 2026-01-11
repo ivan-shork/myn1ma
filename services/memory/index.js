@@ -4,19 +4,38 @@ import config from '../../config/index';
 import * as mockData from '../mock/index';
 
 /**
- * 获取时光记录列表（按时间倒序）
+ * 获取时光记录列表
+ * @param {number} pageNumber - 页码
+ * @param {number} pageSize - 每页条数
+ * @param {string} sortBy - 排序方式: 'happenTime' | 'createTime'
  */
-export async function getMemoryRecords() {
+export async function getMemoryRecords(pageNumber = 1, pageSize = 20, sortBy = 'happenTime') {
   // Mock 模式
   if (config.useMock) {
     const records = mockData.getAllMemoryRecords();
-    return records.sort((a, b) => new Date(b.date) - new Date(a.date));
+    console.log(records, 'ress....');
+    if (sortBy === 'happenTime') {
+      return records.sort((a, b) => (b.happenTimestamp || 0) - (a.happenTimestamp || 0));
+    } else {
+      return records.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    }
   }
 
   try {
-    const records = await getAll({ name: DATA_MODEL_KEY.MEMORY_RECORDS });
-    // 按日期倒序排序
-    return records.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // 根据排序方式确定排序字段
+    const orderBy = sortBy === 'happenTime' ? 'happenTimestamp' : 'updatedAt';
+
+    const result = await getAll({
+      name: DATA_MODEL_KEY.MEMORY_RECORDS,
+      pageNumber,
+      pageSize,
+      orderBy: orderBy,
+      order: 'desc'
+    });
+
+    // 兼容处理：如果是对象结构（云数据库），返回 data；如果是数组（旧逻辑），直接返回
+    const records = result.data || result;
+    return records;
   } catch (error) {
     console.error('获取时光记录列表失败:', error);
     return [];
@@ -115,7 +134,7 @@ export async function getComments(memoryId) {
   }
 
   try {
-    const comments = await getAll({
+    const result = await getAll({
       name: DATA_MODEL_KEY.COMMENTS,
       filter: {
         where: {
@@ -125,6 +144,8 @@ export async function getComments(memoryId) {
         }
       }
     });
+    // 兼容处理：如果是对象结构（云数据库），返回 data
+    const comments = result.data || result;
     // 按时间正序排序
     return comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   } catch (error) {
@@ -209,7 +230,7 @@ export async function updateRating(id, ratings) {
       _id: id,
       data: {
         ratings: ratings,
-        updatedAt: new Date().toLocaleString()
+        updatedAt: Date.now()
       }
     });
     return result;

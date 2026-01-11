@@ -36,9 +36,7 @@ export function addMemoryRecord(record) {
   console.log('Mock: 添加时光记录，传入数据:', record);
   const newRecord = {
     ...record,
-    _id: Date.now().toString(),
-    createdAt: new Date().toLocaleString(),
-    updatedAt: new Date().toLocaleString()
+    _id: Date.now().toString()
   };
   memoryRecords.unshift(newRecord);
   console.log('Mock: 添加后的记录列表:', memoryRecords);

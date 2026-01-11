@@ -17,7 +17,9 @@ Page({
   data: {
     memories: [],
     loading: true,
-    statusBarHeight: 0
+    statusBarHeight: 0,
+    showActionMenu: false,
+    sortBy: 'happenTime' // 'happenTime' | 'createTime'
   },
 
   onLoad() {
@@ -60,7 +62,7 @@ Page({
 
     try {
       // 直接从服务层获取数据（Mock模式或云数据库）
-      const memories = await getMemoryRecords();
+      const memories = await getMemoryRecords(1, 100, this.data.sortBy);
 
       console.log('获取到的时光记录:', memories);
 
@@ -107,8 +109,35 @@ Page({
     return RATING_CONFIG.labels[average] || '';
   },
 
+  // 切换操作菜单显示
+  toggleActionMenu() {
+    this.setData({
+      showActionMenu: !this.data.showActionMenu
+    });
+  },
+
+  // 关闭操作菜单
+  closeActionMenu() {
+    this.setData({
+      showActionMenu: false
+    });
+  },
+
+  // 切换排序方式
+  toggleSort() {
+    const newSortBy = this.data.sortBy === 'happenTime' ? 'createTime' : 'happenTime';
+    this.setData({
+      sortBy: newSortBy,
+      showActionMenu: false
+    });
+    this.fetchMemories();
+  },
+
   // 跳转到新建页面
   goToAdd() {
+    this.setData({
+      showActionMenu: false
+    });
     wx.navigateTo({
       url: '/pages/create/index'
     });

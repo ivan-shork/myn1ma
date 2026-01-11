@@ -10,29 +10,53 @@ export function model() {
 }
 
 /**
- * 读取多条数据
+ * 读取多条数据（带分页）
  */
-export async function getAll({ filter, select, name, pageNumber = 1, pageSize = 100 }) {
+export async function getAll({ filter, select, name, pageNumber = 1, pageSize = 100, orderBy = 'updatedAt', order = 'desc' }) {
   const db = model();
   const collection = db.collection(name);
 
   try {
-    console.log('开始获取数据，集合:', name);
+    console.log('开始获取数据，集合:', name, '页码:', pageNumber, '每页条数:', pageSize, '排序字段:', orderBy, '排序方向:', order);
 
-    // 直接获取数据，不使用复杂的 filter
-    const result = await collection
-      .orderBy('updatedAt', 'desc')
+    // 计算跳过的记录数
+    const skip = (pageNumber - 1) * pageSize;
+
+    // 先获取总数
+    const countResult = await collection.count();
+    const total = countResult.total;
+
+    // 构建查询
+    let query = collection.orderBy(orderBy, order);
+
+    // 获取当前页数据
+    const result = await query
+      .skip(skip)
       .limit(pageSize)
       .get();
 
-    // 格式化时间
-    const records = result.data
+    const records = result.data;
 
+    console.log('获取记录列表成功，总数:', total, '当前页条数:', records.length);
     console.log('最终返回的记录列表:', records);
-    return records;
+
+    // 返回数据和分页信息
+    return {
+      data: records,
+      total: total,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+      totalPages: Math.ceil(total / pageSize)
+    };
   } catch (error) {
     console.error('getAll 错误:', error);
-    return [];
+    return {
+      data: [],
+      total: 0,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+      totalPages: 0
+    };
   }
 }
 

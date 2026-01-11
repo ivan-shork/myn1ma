@@ -205,6 +205,7 @@
 
 .rating-section .section-header {
   position: relative;
+  padding-right: 60rpx;
 }
 
 .average-rating-badge {
@@ -215,8 +216,31 @@
   box-shadow: 0 4rpx 12rpx rgba(255, 182, 193, 0.3);
 }
 
-.average-rating-text {
-  font-size: 24rpx;
+/* 保存评分按钮 */
+.save-rating-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44rpx;
+  height: 44rpx;
+  /* background: linear-gradient(135deg, #A8E6CF, #88D4AB); */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.save-rating-btn.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.save-rating-text {
+  font-size: 20rpx;
   font-weight: 600;
   color: #fff;
 }
@@ -286,11 +310,12 @@
 /* 最终得分盖章 */
 .final-rating-stamp {
   position: absolute;
-  top: 10rpx;
-  right: 30rpx;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
   width: 120rpx;
   height: 120rpx;
-  border-radius: 50rpx;
+  border-radius: 100rpx;
   border: 4rpx dashed rgba(136, 212, 171, 0.4);
   display: flex;
   align-items: center;
@@ -298,7 +323,6 @@
   font-size: 32rpx;
   font-weight: 700;
   color: rgba(136, 212, 171, 0.5);
-  transform: rotate(-15deg);
   pointer-events: none;
   z-index: 9999;
 }

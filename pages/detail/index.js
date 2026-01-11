@@ -39,7 +39,8 @@ Page({
     ratingLabels: RATING_CONFIG.labels,
     averageRatingLabel: '',
     userAvatar: '',
-    userNickname: ''
+    userNickname: '',
+    hasUnsavedRatings: false
   },
 
   onLoad(options) {
@@ -116,7 +117,8 @@ Page({
       this.setData({
         record,
         comments,
-        averageRatingLabel
+        averageRatingLabel,
+        hasUnsavedRatings: false
       });
     } catch (error) {
       console.error('获取详情失败:', error);
@@ -165,8 +167,8 @@ Page({
     return valueToIndex[ratingValue] ?? -1;
   },
 
-  // 评分改变
-  async onRatingChange(e) {
+  // 评分选择（只更新本地数据）
+  onRatingSelect(e) {
     const { person } = e.currentTarget.dataset;
     const index = e.detail.value;
     const { record } = this.data;
@@ -191,26 +193,54 @@ Page({
 
     this.setData({
       record: newRecord,
-      averageRatingLabel
+      averageRatingLabel,
+      hasUnsavedRatings: true
+    });
+  },
+
+  // 保存评分到后端
+  async onSaveRatings() {
+    const { record } = this.data;
+
+    if (this.data.submitting) {
+      return;
+    }
+
+    this.setData({
+      submitting: true
     });
 
-    // 保存到后端
+    wx.showLoading({
+      title: '保存中...'
+    });
+
     try {
-      const result = await updateRating(record._id, newRatings);
+      const result = await updateRating(record._id, record.ratings);
       console.log('评分保存结果:', result);
+
+      wx.hideLoading();
       wx.showToast({
-        title: '评分成功',
+        title: '保存成功',
         icon: 'success',
-        duration: 1000
+        duration: 1500
       });
+
+      // 清除未保存标记
+      this.setData({
+        hasUnsavedRatings: false,
+        submitting: false
+      });
+
     } catch (error) {
+      wx.hideLoading();
       console.error('保存评分失败:', error);
       wx.showToast({
         title: '保存失败',
         icon: 'none'
       });
-      // 回滚本地数据
-      this.setData({ record });
+      this.setData({
+        submitting: false
+      });
     }
   },
 

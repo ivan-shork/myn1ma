@@ -72,9 +72,22 @@
 </scroll-view>
 
 <!-- 新建按钮 -->
-<view class="add-button" bindtap="goToAdd">
+<view class="add-button" bindtap="toggleActionMenu">
   <view class="add-btn-inner">
     <text class="add-icon">✏️</text>
   </view>
   <view class="add-btn-shadow"></view>
+</view>
+
+<!-- 操作菜单 -->
+<view class="action-menu-mask {{showActionMenu ? 'show' : ''}}" bindtap="closeActionMenu"></view>
+<view class="action-menu {{showActionMenu ? 'show' : ''}}">
+  <view class="menu-item" bindtap="goToAdd">
+    <text class="menu-icon">➕</text>
+    <text class="menu-text">新建记录</text>
+  </view>
+  <view class="menu-item" bindtap="toggleSort">
+    <text class="menu-icon">{{sortBy === 'happenTime' ? '⏰' : '🕐'}}</text>
+    <text class="menu-text">{{sortBy === 'happenTime' ? '按创建时间排序' : '按发生时间排序'}}</text>
+  </view>
 </view>

@@ -4,6 +4,7 @@
 <view class="nav-bar">
   <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
   <view class="nav-title-area">
+    <!-- <view class="nav-back" bindtap="goBack">‹</view> -->
     <view class="nav-title">详情</view>
   </view>
 </view>
@@ -81,6 +82,9 @@
           <view class="average-rating-badge" wx:if="{{record.averageRating !== undefined}}">
             <text class="average-rating-text">{{averageRatingLabel}}</text>
           </view>
+          <view class="save-rating-btn {{hasUnsavedRatings ? 'show' : ''}}" bindtap="onSaveRatings">
+            <text class="save-rating-text">💾</text>
+          </view>
         </view>
 
         <!-- 评分列表 -->
@@ -94,7 +98,7 @@
               <picker
                 mode="selector"
                 range="{{ratingOptions}}"
-                bindchange="onRatingChange"
+                bindchange="onRatingSelect"
                 data-person="{{person}}"
                 value="{{ratingUtils.getRatingIndex(record.ratings[person])}}"
               >

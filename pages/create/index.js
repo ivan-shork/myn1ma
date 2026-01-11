@@ -1,6 +1,8 @@
 import { addMemoryRecord } from '../../services/memory/index';
 import dayjs from 'dayjs';
 import { requestUserNickname } from '../../utils/auth';
+import { uploadImageToCloud } from '../../utils/cloud-storage';
+import config from '../../config/index';
 
 Page({
   data: {
@@ -100,12 +102,63 @@ Page({
   },
 
   // 图片添加
-  onUploadAdd(e) {
+  async onUploadAdd(e) {
     const { files } = e.detail;
     console.log('图片添加:', files);
-    this.setData({
-      images: [...this.data.images, ...files]
+
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    // 开发环境使用本地上传，生产环境使用云存储
+    if (config.useMock) {
+      // 本地开发环境：直接使用临时路径
+      this.setData({
+        images: [...this.data.images, ...files]
+      });
+      console.log('本地开发模式，使用本地图片路径');
+      return;
+    }
+
+    // 生产环境：上传到云存储
+    wx.showLoading({
+      title: '上传中...',
+      mask: true
     });
+
+    try {
+      // 上传每张图片到云存储
+      const uploadPromises = files.map(async (file) => {
+        const cloudUrl = await uploadImageToCloud(file.url);
+        return {
+          url: cloudUrl,
+          name: file.name || 'image'
+        };
+      });
+
+      const uploadedFiles = await Promise.all(uploadPromises);
+
+      wx.hideLoading();
+      wx.showToast({
+        title: '上传成功',
+        icon: 'success',
+        duration: 1000
+      });
+
+      this.setData({
+        images: [...this.data.images, ...uploadedFiles]
+      });
+
+      console.log('图片上传完成，当前图片列表:', this.data.images);
+
+    } catch (error) {
+      wx.hideLoading();
+      console.error('图片上传失败:', error);
+      wx.showToast({
+        title: '上传失败，请重试',
+        icon: 'none'
+      });
+    }
   },
 
   // 图片删除
@@ -189,22 +242,31 @@ Page({
       const imageUrls = this.data.images.map(img => img.url);
       console.log('图片URL列表:', imageUrls);
 
+      // 计算发生时间的时间戳
+      let happenTimestamp = Date.now();
+      if (this.data.date) {
+        const dateTimeStr = this.data.time
+          ? `${this.data.date} ${this.data.time}`
+          : `${this.data.date} 00:00`;
+        happenTimestamp = dayjs(dateTimeStr).valueOf();
+      }
+
       const recordData = {
         title: this.data.title.trim(),
         description: this.data.description.trim(),
         date: this.data.date,
         time: this.data.time,
+        happenTimestamp: happenTimestamp,
         location: this.data.location.trim(),
         images: imageUrls,
         participants: this.data.participants,
         creator: userNickname,
-        createdAt: new Date().toLocaleString(),
-        updatedAt: new Date().toLocaleString()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       };
 
       console.log('准备保存的记录数据:', recordData);
       console.log('准备调用 addMemoryRecord...');
-      console.log('addMemoryRecord 函数:', addMemoryRecord);
 
       const result = await addMemoryRecord(recordData);
 
