@@ -15,6 +15,7 @@
 
 /* 容器 */
 .container {
+  width: 100%;
   padding: 0;
   background: transparent;
 }
@@ -58,18 +59,22 @@
 
 /* 时间线容器 */
 .timeline-container {
+  margin-top: 100rpx;
   position: relative;
-  padding: 10rpx 32rpx 180rpx;
+  /* padding: 10rpx 32rpx 180rpx; */
+  width: 90%;
 }
 
 /* 时间线项 */
 .timeline-item {
+  width: 100%;
   margin-bottom: 32rpx;
 }
 
 /* 记忆卡片 */
 .memory-card {
   position: relative;
+  width: 100%;
   background: #fff;
   border-radius: 32rpx;
   overflow: hidden;
@@ -140,8 +145,10 @@
 
 /* 卡片内容区 */
 .card-body {
+  width: 100%;
   padding: 28rpx 28rpx 32rpx;
   position: relative;
+  box-sizing: border-box;
 }
 
 /* 卡片印章 */
@@ -151,7 +158,7 @@
   right: 20rpx;
   width: 100rpx;
   height: 100rpx;
-  border-radius: 50%;
+  border-radius: 50rpx;
   border: 3rpx dashed rgba(136, 212, 171, 0.4);
   display: flex;
   align-items: center;
@@ -161,7 +168,7 @@
   color: rgba(136, 212, 171, 0.5);
   transform: rotate(-15deg);
   pointer-events: none;
-  background: radial-gradient(circle, rgba(136, 212, 171, 0.1) 0%, transparent 70%);
+  z-index: 9999;
 }
 
 .card-rating-stamp.stamp-low {
@@ -171,17 +178,21 @@
 }
 
 .card-title {
+  width: 100%;
   font-size: 36rpx;
   font-weight: 600;
   color: #5D4E60;
   margin-bottom: 20rpx;
   line-height: 1.4;
+  word-wrap: break-word;
 }
 
 /* 卡片元信息 */
 .card-meta {
   display: flex;
   align-items: center;
+  width: fit-content;
+  max-width: 100%;
   margin-bottom: 12rpx;
   padding: 8rpx 16rpx;
   background: #FFF5F7;
@@ -191,11 +202,14 @@
 .meta-icon {
   font-size: 28rpx;
   margin-right: 8rpx;
+  flex-shrink: 0;
 }
 
 .meta-text {
   font-size: 26rpx;
   color: #8B7E8F;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 /* 卡片描述 */

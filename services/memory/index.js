@@ -1,4 +1,4 @@
-import { model, getAll, getOne } from '../_utils/model';
+import { model, getAll, getOne, add, update, remove } from '../_utils/model';
 import { DATA_MODEL_KEY } from '../../config/model';
 import config from '../../config/index';
 import * as mockData from '../mock/index';
@@ -28,6 +28,7 @@ export async function getMemoryRecords() {
  * @param {string} id - 记录ID
  */
 export async function getMemoryRecordDetail(id) {
+    console.log(id, 'id....');
   // Mock 模式
   if (config.useMock) {
     return mockData.getMemoryRecordById(id);
@@ -54,7 +55,7 @@ export async function addMemoryRecord(data) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.MEMORY_RECORDS).add(data);
+    const result = await add({ name: DATA_MODEL_KEY.MEMORY_RECORDS, data });
     return result;
   } catch (error) {
     console.error('添加时光记录失败:', error);
@@ -74,7 +75,7 @@ export async function updateMemoryRecord(id, data) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.MEMORY_RECORDS).update(id, data);
+    const result = await update({ name: DATA_MODEL_KEY.MEMORY_RECORDS, _id: id, data });
     return result;
   } catch (error) {
     console.error('更新时光记录失败:', error);
@@ -93,7 +94,7 @@ export async function deleteMemoryRecord(id) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.MEMORY_RECORDS).delete(id);
+    const result = await remove({ name: DATA_MODEL_KEY.MEMORY_RECORDS, _id: id });
     return result;
   } catch (error) {
     console.error('删除时光记录失败:', error);
@@ -143,7 +144,7 @@ export async function addComment(data) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.COMMENTS).add(data);
+    const result = await add({ name: DATA_MODEL_KEY.COMMENTS, data });
     return result;
   } catch (error) {
     console.error('添加评论失败:', error);
@@ -162,9 +163,7 @@ export async function likeComment(id) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.COMMENTS).update(id, {
-      $inc: { likes: 1 }
-    });
+    const result = await update({ name: DATA_MODEL_KEY.COMMENTS, _id: id, data: { likes: (await getOne({ name: DATA_MODEL_KEY.COMMENTS, _id: id }))?.likes || 0 + 1 }});
     return result;
   } catch (error) {
     console.error('点赞评论失败:', error);
@@ -183,7 +182,7 @@ export async function deleteComment(id) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.COMMENTS).delete(id);
+    const result = await remove({ name: DATA_MODEL_KEY.COMMENTS, _id: id });
     return result;
   } catch (error) {
     console.error('删除评论失败:', error);
@@ -205,9 +204,13 @@ export async function updateRating(id, ratings) {
   }
 
   try {
-    const result = await model(DATA_MODEL_KEY.MEMORY_RECORDS).update(id, {
-      ratings: ratings,
-      updatedAt: new Date().toISOString()
+    const result = await update({
+      name: DATA_MODEL_KEY.MEMORY_RECORDS,
+      _id: id,
+      data: {
+        ratings: ratings,
+        updatedAt: new Date().toLocaleString()
+      }
     });
     return result;
   } catch (error) {

@@ -198,8 +198,8 @@ Page({
         images: imageUrls,
         participants: this.data.participants,
         creator: userNickname,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        createdAt: new Date().toLocaleString(),
+        updatedAt: new Date().toLocaleString()
       };
 
       console.log('准备保存的记录数据:', recordData);

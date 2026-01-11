@@ -4,10 +4,7 @@
 <view class="nav-bar">
   <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
   <view class="nav-title-area">
-    <view class="nav-back" bindtap="goBack">
-      <text>‹</text>
-    </view>
-    <view class="nav-title">Time Snapshot</view>
+    <view class="nav-title">详情</view>
   </view>
 </view>
 
@@ -134,7 +131,10 @@
         <!-- 评论列表 -->
         <view class="comments-list">
           <view class="comment-item" wx:for="{{comments}}" wx:key="_id">
-            <view class="comment-avatar">{{item.author.charAt(0)}}</view>
+            <view class="comment-avatar" wx:if="{{item.avatarUrl}}">
+              <image class="comment-avatar-img" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+            </view>
+            <view class="comment-avatar" wx:else>{{item.author.charAt(0)}}</view>
             <view class="comment-body">
               <view class="comment-header">
                 <text class="comment-author">{{item.author}}</text>
@@ -159,6 +159,21 @@
 <!-- 底部评论输入 -->
 <view class="comment-bar">
   <view class="comment-input-wrapper">
+    <!-- 左侧：头像和昵称 -->
+    <view class="user-section">
+      <button class="user-avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="user-avatar" src="{{userAvatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      </button>
+      <input
+        class="nickname-input-compact"
+        type="nickname"
+        placeholder="昵称"
+        value="{{userNickname}}"
+        bindinput="onNicknameInput"
+      />
+    </view>
+
+    <!-- 中间：评论输入框 -->
     <input
       class="comment-input"
       placeholder="写点什么..."
@@ -167,6 +182,8 @@
       confirm-type="send"
       bindconfirm="onSubmitComment"
     />
+
+    <!-- 右侧：发送按钮 -->
     <view class="send-btn" bindtap="onSubmitComment" wx:if="{{!submitting}}">
       <text class="send-icon">🚀</text>
     </view>

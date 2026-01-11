@@ -4,13 +4,7 @@
 >
   <view class="container">
   <!-- 状态栏占位 -->
-  <view class="status-bar-spacer" style="height: {{statusBarHeight}}px;"></view>
-
-  <!-- 顶部装饰云朵 -->
-  <view class="cloud-decoration">
-    <view class="cloud cloud-1">☁️</view>
-    <view class="cloud cloud-2">☁️</view>
-  </view>
+  <!-- <view class="status-bar-spacer" style="height: {{statusBarHeight}}px;"></view> -->
 
   <!-- 时光线列表 -->
   <view class="timeline-container" wx:if="{{!loading && memories.length > 0}}">

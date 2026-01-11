@@ -1,6 +1,6 @@
 import { getMemoryRecordDetail, getComments, addComment, updateRating } from '../../services/memory/index';
 import dayjs from 'dayjs';
-import { requestUserNickname } from '../../utils/auth';
+import { requestUserNickname, getUserInfo, getUserAvatarUrl, setUserAvatarUrl, setUserNickname } from '../../utils/auth';
 
 // 评分配置
 const RATING_CONFIG = {
@@ -37,7 +37,9 @@ Page({
     statusBarHeight: 0,
     ratingOptions: RATING_CONFIG.options,
     ratingLabels: RATING_CONFIG.labels,
-    averageRatingLabel: ''
+    averageRatingLabel: '',
+    userAvatar: '',
+    userNickname: ''
   },
 
   onLoad(options) {
@@ -45,6 +47,14 @@ Page({
     const systemInfo = wx.getSystemInfoSync();
     const statusBarHeight = systemInfo.statusBarHeight || 0;
     this.setData({ statusBarHeight });
+
+    // 加载用户信息
+    const userInfo = getUserInfo();
+    const avatarUrl = getUserAvatarUrl();
+    this.setData({
+      userNickname: userInfo.nickName || '',
+      userAvatar: avatarUrl
+    });
 
     if (options.id) {
       this.setData({ id: options.id });
@@ -81,9 +91,23 @@ Page({
         getComments(this.data.id)
       ]);
 
+      // 检查记录是否存在
+      if (!record) {
+        wx.showToast({
+          title: '记录不存在',
+          icon: 'none'
+        });
+        return;
+      }
+
       // 确保有评分对象
       if (!record.ratings) {
         record.ratings = {};
+      }
+
+      // 确保有参与者数组
+      if (!record.participants) {
+        record.participants = [];
       }
 
       // 计算平均分标签
@@ -213,13 +237,41 @@ Page({
     });
   },
 
+  // 选择头像
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail;
+    console.log('选择头像:', avatarUrl);
+    setUserAvatarUrl(avatarUrl);
+    this.setData({
+      userAvatar: avatarUrl
+    });
+  },
+
+  // 昵称输入
+  onNicknameInput(e) {
+    const nickName = e.detail.value;
+    console.log('输入昵称:', nickName);
+    setUserNickname(nickName);
+    this.setData({
+      userNickname: nickName
+    });
+  },
+
   // 提交评论
   async onSubmitComment() {
-    const { commentInput, id } = this.data;
+    const { commentInput, id, userNickname, userAvatar } = this.data;
 
     if (!commentInput.trim()) {
       wx.showToast({
         title: '请输入评论内容',
+        icon: 'none'
+      });
+      return;
+    }
+
+    if (!userNickname) {
+      wx.showToast({
+        title: '请先设置昵称',
         icon: 'none'
       });
       return;
@@ -234,16 +286,13 @@ Page({
     });
 
     try {
-      // 获取用户昵称
-      const userNickname = await requestUserNickname();
-      console.log('评论用户昵称:', userNickname);
-
       await addComment({
         memoryId: id,
         content: commentInput.trim(),
         author: userNickname,
+        avatarUrl: userAvatar,
         likes: 0,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toLocaleString()
       });
 
       this.setData({

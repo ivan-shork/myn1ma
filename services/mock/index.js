@@ -37,8 +37,8 @@ export function addMemoryRecord(record) {
   const newRecord = {
     ...record,
     _id: Date.now().toString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: new Date().toLocaleString(),
+    updatedAt: new Date().toLocaleString()
   };
   memoryRecords.unshift(newRecord);
   console.log('Mock: 添加后的记录列表:', memoryRecords);
@@ -54,7 +54,7 @@ export function updateMemoryRecord(id, data) {
     memoryRecords[index] = {
       ...memoryRecords[index],
       ...data,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toLocaleString()
     };
     return memoryRecords[index];
   }
@@ -97,8 +97,8 @@ export function addComment(commentData) {
     ...commentData,
     _id: 'c' + Date.now(),
     likes: 0,
-    createdAt: new Date().toISOString(),
-    time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+    createdAt: new Date().toLocaleString(),
+    time: new Date().toLocaleString().replace('T', ' ').substring(0, 19)
   };
   comments.push(newComment);
   return newComment;
@@ -150,7 +150,7 @@ export function updateRating(id, ratings) {
     memoryRecords[index] = {
       ...memoryRecords[index],
       ratings: ratings,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toLocaleString()
     };
     console.log('Mock: 评分更新成功:', memoryRecords[index]);
     return memoryRecords[index];

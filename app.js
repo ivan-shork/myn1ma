@@ -3,7 +3,7 @@ import updateManager from './common/updateManager';
 import { initUserIdentity } from './utils/auth';
 
 wx.cloud.init({
-  env: 'memories-dev-123456', // 旅行玩乐时光记录小程序云开发环境 ID
+  env: 'cloudbase-6gpmel8o027c1a61', // 旅行玩乐时光记录小程序云开发环境 ID
 });
 const client = init(wx.cloud);
 const models = client.models;
