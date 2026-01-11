@@ -1,5 +1,30 @@
-import { getMemoryRecordDetail, getComments, addComment } from '../../services/memory/index';
+import { getMemoryRecordDetail, getComments, addComment, updateRating } from '../../services/memory/index';
 import dayjs from 'dayjs';
+import { requestUserNickname } from '../../utils/auth';
+
+// 评分配置
+const RATING_CONFIG = {
+  labels: {
+    5: '夯',
+    4: '顶级',
+    3: '人上人',
+    2: 'npc',
+    1: '拉',
+    0: '拉完了'
+  },
+  options: ['夯', '顶级', '人上人', 'npc', '拉', '拉完了']
+};
+
+// 人员 emoji 映射
+const PARTICIPANT_EMOJIS = {
+  '鱼': '🐟',
+  '阿包': '🍔',
+  '直线': '🫧',
+  '婷子': '🐰',
+  '蜜蜂': '🐝',
+  '菠萝': '🍍',
+  '皮卡丘': '⚡'
+};
 
 Page({
   data: {
@@ -9,7 +34,10 @@ Page({
     commentInput: '',
     submitting: false,
     currentImageIndex: 0,
-    statusBarHeight: 0
+    statusBarHeight: 0,
+    ratingOptions: RATING_CONFIG.options,
+    ratingLabels: RATING_CONFIG.labels,
+    averageRatingLabel: ''
   },
 
   onLoad(options) {
@@ -53,9 +81,18 @@ Page({
         getComments(this.data.id)
       ]);
 
+      // 确保有评分对象
+      if (!record.ratings) {
+        record.ratings = {};
+      }
+
+      // 计算平均分标签
+      const averageRatingLabel = this.calculateAverageRating(record.ratings, record.participants);
+
       this.setData({
         record,
-        comments
+        comments,
+        averageRatingLabel
       });
     } catch (error) {
       console.error('获取详情失败:', error);
@@ -65,6 +102,91 @@ Page({
       });
     } finally {
       wx.hideLoading();
+    }
+  },
+
+  // 计算平均分标签
+  calculateAverageRating(ratings, participants) {
+    if (!ratings || Object.keys(ratings).length === 0) {
+      return '';
+    }
+
+    // 只计算已评分的人员
+    const ratedValues = Object.values(ratings);
+    if (ratedValues.length === 0) {
+      return '';
+    }
+
+    // 计算平均分并向下取值
+    const sum = ratedValues.reduce((a, b) => a + b, 0);
+    const average = Math.floor(sum / ratedValues.length);
+
+    return RATING_CONFIG.labels[average] || '';
+  },
+
+  // 获取人员 emoji
+  getEmoji(person) {
+    return PARTICIPANT_EMOJIS[person] || '👤';
+  },
+
+  // 获取评分在选项中的索引
+  getRatingIndex(person) {
+    const { record } = this.data;
+    if (!record || !record.ratings || record.ratings[person] === undefined) {
+      return -1; // -1 表示未选中
+    }
+    const ratingValue = record.ratings[person];
+    // 将数值转换为选项索引
+    const valueToIndex = { 5: 0, 4: 1, 3: 2, 2: 3, 1: 4, 0: 5 };
+    return valueToIndex[ratingValue] ?? -1;
+  },
+
+  // 评分改变
+  async onRatingChange(e) {
+    const { person } = e.currentTarget.dataset;
+    const index = e.detail.value;
+    const { record } = this.data;
+
+    // 获取选中的评分值
+    const indexToValue = { 0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0 };
+    const ratingValue = indexToValue[index];
+
+    // 更新本地数据
+    const newRatings = {
+      ...record.ratings,
+      [person]: ratingValue
+    };
+
+    const newRecord = {
+      ...record,
+      ratings: newRatings
+    };
+
+    // 计算新的平均分
+    const averageRatingLabel = this.calculateAverageRating(newRatings, record.participants);
+
+    this.setData({
+      record: newRecord,
+      averageRatingLabel
+    });
+
+    // 保存到后端
+    try {
+      const result = await updateRating(record._id, newRatings);
+      console.log('评分保存结果:', result);
+      wx.showToast({
+        title: '评分成功',
+        icon: 'success',
+        duration: 1000
+      });
+    } catch (error) {
+      console.error('保存评分失败:', error);
+      wx.showToast({
+        title: '保存失败',
+        icon: 'none'
+      });
+      // 回滚本地数据
+      this.setData({ record });
     }
   },
 
@@ -112,10 +234,14 @@ Page({
     });
 
     try {
+      // 获取用户昵称
+      const userNickname = await requestUserNickname();
+      console.log('评论用户昵称:', userNickname);
+
       await addComment({
         memoryId: id,
         content: commentInput.trim(),
-        author: '我', // 后续可接入用户信息
+        author: userNickname,
         likes: 0,
         createdAt: new Date().toISOString()
       });

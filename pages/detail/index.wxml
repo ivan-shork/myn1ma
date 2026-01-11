@@ -1,11 +1,13 @@
+<wxs module="ratingUtils" src="./index.wxs"></wxs>
+
 <!-- 自定义导航栏 -->
 <view class="nav-bar">
   <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
   <view class="nav-title-area">
     <view class="nav-back" bindtap="goBack">
-      <t-icon name="chevron-left" size="20" color="#fff" />
+      <text>‹</text>
     </view>
-    <view class="nav-title">活动详情</view>
+    <view class="nav-title">Time Snapshot</view>
   </view>
 </view>
 
@@ -36,84 +38,117 @@
           />
         </swiper-item>
       </swiper>
-      <view class="image-counter">{{currentImageIndex + 1}} / {{record.images.length}}</view>
+      <view class="image-badge">{{currentImageIndex + 1}} / {{record.images.length}}</view>
+      <view class="image-decoration">✨</view>
     </view>
 
     <!-- 内容区域 -->
     <view class="content-container">
 
-      <!-- 标题 -->
-      <view class="title-section">
-        <text class="title">{{record.title}}</text>
+      <!-- 标题卡片 -->
+      <view class="title-card">
+        <view class="title-text">{{record.title}}</view>
       </view>
 
       <!-- 时间地点信息 -->
-      <view class="info-section">
-        <view class="info-item" wx:if="{{record.date}}">
-          <t-icon name="time" size="18" color="#666" />
+      <view class="info-cards">
+        <view class="info-card" wx:if="{{record.date}}">
+          <text class="info-emoji">📅</text>
           <text class="info-text">{{record.date}}</text>
           <text class="info-text" wx:if="{{record.time}}">{{record.time}}</text>
         </view>
-        <view class="info-item" wx:if="{{record.location}}">
-          <t-icon name="location" size="18" color="#666" />
+        <view class="info-card" wx:if="{{record.location}}">
+          <text class="info-emoji">📍</text>
           <text class="info-text">{{record.location}}</text>
         </view>
       </view>
 
       <!-- 参与人员 -->
-      <view class="participants-section" wx:if="{{record.participants.length > 0}}">
-        <view class="section-title">参与人员</view>
-        <view class="participants-tags">
-          <t-tag
-            wx:for="{{record.participants}}"
-            wx:key="index"
-            variant="light"
-            size="medium"
-            class="participant-tag"
-          >
+      <view class="section-block" wx:if="{{record.participants.length > 0}}">
+        <view class="section-header">
+          <text class="section-emoji">👥</text>
+          <text class="section-label">人员</text>
+        </view>
+        <view class="participants-list">
+          <view class="participant-tag" wx:for="{{record.participants}}" wx:key="index">
             {{item}}
-          </t-tag>
+          </view>
+        </view>
+      </view>
+
+      <!-- 评分面板 -->
+      <view class="section-block rating-section" wx:if="{{record.participants.length > 0}}">
+        <view class="section-header">
+          <text class="section-emoji">⭐</text>
+          <text class="section-label">评分</text>
+          <view class="average-rating-badge" wx:if="{{record.averageRating !== undefined}}">
+            <text class="average-rating-text">{{averageRatingLabel}}</text>
+          </view>
+        </view>
+
+        <!-- 评分列表 -->
+        <view class="rating-list">
+          <view class="rating-item" wx:for="{{record.participants}}" wx:key="index" wx:for-item="person">
+            <view class="rating-person">
+              <text class="rating-avatar">{{ratingUtils.getEmoji(person)}}</text>
+              <text class="rating-name">{{person}}</text>
+            </view>
+            <view class="rating-selector">
+              <picker
+                mode="selector"
+                range="{{ratingOptions}}"
+                bindchange="onRatingChange"
+                data-person="{{person}}"
+                value="{{ratingUtils.getRatingIndex(record.ratings[person])}}"
+              >
+                <view class="rating-picker {{record.ratings[person] !== undefined ? 'has-rating' : ''}} {{record.ratings[person] <= 2 && record.ratings[person] !== undefined ? 'has-low-rating' : ''}}">
+              {{record.ratings[person] !== undefined ? ratingLabels[record.ratings[person]] : '未评分'}}
+                </view>
+              </picker>
+            </view>
+          </view>
+        </view>
+
+        <!-- 最终得分盖章 -->
+        <view class="final-rating-stamp {{averageRatingLabel === '拉完了' || averageRatingLabel === '拉' || averageRatingLabel === 'npc' ? 'stamp-low' : ''}}" wx:if="{{averageRatingLabel}}">
+          {{averageRatingLabel}}
         </view>
       </view>
 
       <!-- 活动描述 -->
-      <view class="description-section" wx:if="{{record.description}}">
-        <view class="section-title">活动描述</view>
-        <text class="description-text">{{record.description}}</text>
+      <view class="section-block" wx:if="{{record.description}}">
+        <view class="section-header">
+          <text class="section-emoji">📝</text>
+          <text class="section-label">摘要</text>
+        </view>
+        <view class="description-text">{{record.description}}</view>
       </view>
 
-      <t-divider />
-
       <!-- 评论区 -->
-      <view class="comments-section">
-        <view class="section-title">评论 ({{comments.length}})</view>
+      <view class="section-block comments-section">
+        <view class="section-header">
+          <text class="section-emoji">💬</text>
+          <text class="section-label">评论 ({{comments.length}})</text>
+        </view>
 
         <!-- 评论列表 -->
         <view class="comments-list">
-          <view
-            class="comment-item"
-            wx:for="{{comments}}"
-            wx:key="_id"
-          >
-            <view class="comment-header">
-              <text class="comment-author">{{item.author}}</text>
-              <text class="comment-time">{{item.time}}</text>
-            </view>
-            <text class="comment-content">{{item.content}}</text>
-            <view class="comment-actions">
-              <view
-                class="like-btn"
-                bindtap="onLikeComment"
-                data-index="{{index}}"
-              >
-                <t-icon name="heart" size="16" color="#999" />
-                <text class="like-count">{{item.likes || 0}}</text>
+          <view class="comment-item" wx:for="{{comments}}" wx:key="_id">
+            <view class="comment-avatar">{{item.author.charAt(0)}}</view>
+            <view class="comment-body">
+              <view class="comment-header">
+                <text class="comment-author">{{item.author}}</text>
+                <text class="comment-time">{{item.time}}</text>
               </view>
+              <text class="comment-content">{{item.content}}</text>
             </view>
           </view>
 
           <!-- 空状态 -->
-          <t-empty wx:if="{{comments.length === 0}}" description="暂无评论，快来抢沙发~" />
+          <view class="empty-comments" wx:if="{{comments.length === 0}}">
+            <text class="empty-emoji">🌸</text>
+            <text class="empty-text">暂无评论，快来抢沙发~</text>
+          </view>
         </view>
       </view>
 
@@ -126,25 +161,21 @@
   <view class="comment-input-wrapper">
     <input
       class="comment-input"
-      placeholder="说点什么..."
+      placeholder="写点什么..."
       value="{{commentInput}}"
       bindinput="onCommentInput"
       confirm-type="send"
       bindconfirm="onSubmitComment"
     />
-    <t-button
-      size="small"
-      theme="primary"
-      bindtap="onSubmitComment"
-      disabled="{{!commentInput || submitting}}"
-      loading="{{submitting}}"
-    >
-      发送
-    </t-button>
+    <view class="send-btn" bindtap="onSubmitComment" wx:if="{{!submitting}}">
+      <text class="send-icon">🚀</text>
+    </view>
+    <view class="send-btn sending" wx:else>🎀</view>
   </view>
 </view>
 
 <!-- 加载状态 -->
 <view class="loading-page" wx:if="{{!record}}" style="padding-top: {{statusBarHeight + 44}}px;">
-  <t-loading />
+  <view class="loading-icon">🎀</view>
+  <view class="loading-text">加载中...</view>
 </view>

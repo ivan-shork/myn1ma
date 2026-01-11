@@ -1,6 +1,18 @@
 import { getMemoryRecords } from '../../services/memory/index';
 import config from '../../config/index';
 
+// 评分配置
+const RATING_CONFIG = {
+  labels: {
+    5: '夯',
+    4: '顶级',
+    3: '人上人',
+    2: 'npc',
+    1: '拉',
+    0: '拉完了'
+  }
+};
+
 Page({
   data: {
     memories: [],
@@ -47,18 +59,23 @@ Page({
     this.setData({ loading: true });
 
     try {
-      let memories = [];
+      // 直接从服务层获取数据（Mock模式或云数据库）
+      const memories = await getMemoryRecords();
 
-      if (config.useMock) {
-        // 使用Mock数据
-        memories = this.getMockData();
-      } else {
-        // 从云数据库获取
-        memories = await getMemoryRecords();
-      }
+      console.log('获取到的时光记录:', memories);
+
+      // 为每条记录计算平均分
+      const memoriesWithRating = memories.map(memory => {
+        const avgLabel = this.calculateAverageRating(memory.ratings);
+        console.log(`记录 ${memory._id} 的评分:`, memory.ratings, '平均分:', avgLabel);
+        return {
+          ...memory,
+          averageRatingLabel: avgLabel
+        };
+      });
 
       this.setData({
-        memories,
+        memories: memoriesWithRating,
         loading: false
       });
     } catch (error) {
@@ -73,40 +90,21 @@ Page({
     }
   },
 
-  // Mock数据
-  getMockData() {
-    return [
-      {
-        _id: '1',
-        title: '周末去爬山',
-        description: '今天天气很好，和朋友们一起去爬山，风景非常美丽。',
-        date: '2024-01-20',
-        time: '09:30',
-        location: '杭州西湖',
-        images: ['/images/mock/girl.jpg'],
-        participants: ['张三', '李四', '王五']
-      },
-      {
-        _id: '2',
-        title: '火锅聚餐',
-        description: '好久没聚了，一起吃了顿火锅，聊得很开心。',
-        date: '2024-01-15',
-        time: '18:00',
-        location: '海底捞',
-        images: ['/images/mock/littlegirl.jpg'],
-        participants: ['小明', '小红', '小刚']
-      },
-      {
-        _id: '3',
-        title: '看电影',
-        description: '新上映的电影非常精彩，推荐！',
-        date: '2024-01-10',
-        time: '14:00',
-        location: '万达影城',
-        images: ['/images/mock/girl.jpg'],
-        participants: ['小李', '小王']
-      }
-    ];
+  // 计算平均分标签
+  calculateAverageRating(ratings) {
+    if (!ratings || Object.keys(ratings).length === 0) {
+      return '';
+    }
+
+    const ratedValues = Object.values(ratings);
+    if (ratedValues.length === 0) {
+      return '';
+    }
+
+    const sum = ratedValues.reduce((a, b) => a + b, 0);
+    const average = Math.floor(sum / ratedValues.length);
+
+    return RATING_CONFIG.labels[average] || '';
   },
 
   // 跳转到新建页面

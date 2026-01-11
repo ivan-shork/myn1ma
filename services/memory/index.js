@@ -49,6 +49,7 @@ export async function getMemoryRecordDetail(id) {
 export async function addMemoryRecord(data) {
   // Mock 模式
   if (config.useMock) {
+      console.log('add', data);
     return mockData.addMemoryRecord(data);
   }
 
@@ -186,6 +187,31 @@ export async function deleteComment(id) {
     return result;
   } catch (error) {
     console.error('删除评论失败:', error);
+    return null;
+  }
+}
+
+// ==================== 评分相关 ====================
+
+/**
+ * 更新评分
+ * @param {string} id - 记录ID
+ * @param {object} ratings - 评分数据 { "鱼": 5, "阿包": 4 }
+ */
+export async function updateRating(id, ratings) {
+  // Mock 模式
+  if (config.useMock) {
+    return mockData.updateRating(id, ratings);
+  }
+
+  try {
+    const result = await model(DATA_MODEL_KEY.MEMORY_RECORDS).update(id, {
+      ratings: ratings,
+      updatedAt: new Date().toISOString()
+    });
+    return result;
+  } catch (error) {
+    console.error('更新评分失败:', error);
     return null;
   }
 }

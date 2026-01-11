@@ -33,14 +33,15 @@ export function getMemoryRecordById(id) {
  * 添加时光记录
  */
 export function addMemoryRecord(record) {
+  console.log('Mock: 添加时光记录，传入数据:', record);
   const newRecord = {
     ...record,
     _id: Date.now().toString(),
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+    updatedAt: new Date().toISOString()
   };
   memoryRecords.unshift(newRecord);
+  console.log('Mock: 添加后的记录列表:', memoryRecords);
   return newRecord;
 }
 
@@ -133,4 +134,27 @@ export function deleteComment(id) {
 export function resetMockData() {
   memoryRecords = [...initialMemoryRecords];
   comments = [...initialComments];
+}
+
+// ==================== 评分相关 ====================
+
+/**
+ * 更新评分
+ * @param {string} id - 记录ID
+ * @param {object} ratings - 评分数据 { "鱼": 5, "阿包": 4 }
+ */
+export function updateRating(id, ratings) {
+  console.log('Mock: 更新评分，记录ID:', id, '评分数据:', ratings);
+  const index = memoryRecords.findIndex(r => r._id === id);
+  if (index !== -1) {
+    memoryRecords[index] = {
+      ...memoryRecords[index],
+      ratings: ratings,
+      updatedAt: new Date().toISOString()
+    };
+    console.log('Mock: 评分更新成功:', memoryRecords[index]);
+    return memoryRecords[index];
+  }
+  console.log('Mock: 未找到记录，ID:', id);
+  return null;
 }

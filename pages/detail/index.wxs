@@ -1,0 +1,49 @@
+// 人员 emoji 映射
+var PARTICIPANT_EMOJIS = {
+  '鱼': '🐟',
+  '阿包': '🍔',
+  '直线': '🫧',
+  '婷子': '🐰',
+  '蜜蜂': '🐝',
+  '菠萝': '🍍',
+  '皮卡丘': '⚡'
+};
+
+/**
+ * 获取人员 emoji
+ */
+function getEmoji(person) {
+  if (PARTICIPANT_EMOJIS[person]) {
+    return PARTICIPANT_EMOJIS[person];
+  }
+  return '👤';
+}
+
+/**
+ * 获取评分在选项中的索引
+ * ratingValue: 评分数值 (0-5)
+ */
+function getRatingIndex(ratingValue) {
+  if (ratingValue === undefined || ratingValue === '' || ratingValue === null) {
+    return 0;
+  }
+  // 评分数值到索引的映射: 5->0, 4->1, 3->2, 2->3, 1->4, 0->5
+  var valueToIndex = {
+    '5': 0,
+    '4': 1,
+    '3': 2,
+    '2': 3,
+    '1': 4,
+    '0': 5
+  };
+  var key = ratingValue.toString();
+  if (valueToIndex[key] !== undefined) {
+    return valueToIndex[key];
+  }
+  return 0;
+}
+
+module.exports = {
+  getEmoji: getEmoji,
+  getRatingIndex: getRatingIndex
+};

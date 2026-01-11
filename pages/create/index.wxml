@@ -2,10 +2,7 @@
 <view class="nav-bar">
   <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
   <view class="nav-title-area">
-    <view class="nav-back" bindtap="goBack">
-      <t-icon name="chevron-left" size="20" color="#fff" />
-    </view>
-    <view class="nav-title">新建活动</view>
+    <view class="nav-title">创建</view>
   </view>
 </view>
 
@@ -18,52 +15,74 @@
   <view class="create-page">
     <view class="form-container">
 
+    <!-- 顶部装饰 -->
+    <view class="form-header">
+      <text class="header-emoji">✨</text>
+      <text class="header-text">时光记录</text>
+    </view>
+
     <!-- 活动名称 -->
     <view class="form-item">
-      <view class="form-label required">活动名称</view>
-      <t-input
-        placeholder="请输入活动名称"
+      <view class="form-label">
+        <text class="label-emoji">📌</text>
+        <text class="label-text">名称</text>
+        <text class="required-mark">*</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="给这次活动起个名字吧~"
         value="{{title}}"
-        bind:change="onTitleChange"
+        bindinput="onTitleChange"
         maxlength="50"
       />
     </view>
 
     <!-- 活动描述 -->
     <view class="form-item">
-      <view class="form-label">活动描述</view>
-      <t-textarea
-        placeholder="记录一下这次活动的美好回忆..."
+      <view class="form-label">
+        <text class="label-emoji">📝</text>
+        <text class="label-text">描述</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="描述"
         value="{{description}}"
-        bind:change="onDescriptionChange"
+        bindinput="onDescriptionChange"
         maxlength="500"
-        autosize
+        auto-height
       />
     </view>
 
     <!-- 日期时间 -->
     <view class="form-item-row">
       <view class="form-item-half">
-        <view class="form-label required">日期</view>
+        <view class="form-label">
+          <text class="label-emoji">📅</text>
+          <text class="label-text">日期</text>
+          <text class="required-mark">*</text>
+        </view>
         <picker
           mode="date"
           value="{{date}}"
           bindchange="onDateChange"
         >
-          <view class="picker-value">
-            {{date || '请选择日期'}}
+          <view class="picker-box {{date ? 'has-value' : ''}}">
+            {{date || '选择日期'}}
           </view>
         </picker>
       </view>
       <view class="form-item-half">
-        <view class="form-label">时间</view>
+        <view class="form-label">
+          <text class="label-emoji">⏰</text>
+          <text class="label-text">时间</text>
+        </view>
         <picker
           mode="time"
           value="{{time}}"
           bindchange="onTimeChange"
         >
-          <view class="picker-value">
-            {{time || '请选择时间'}}
+          <view class="picker-box {{time ? 'has-value' : ''}}">
+            {{time || '选择时间'}}
           </view>
         </picker>
       </view>
@@ -71,53 +90,55 @@
 
     <!-- 地点 -->
     <view class="form-item">
-      <view class="form-label">地点</view>
-      <t-input
+      <view class="form-label">
+        <text class="label-emoji">📍</text>
+        <text class="label-text">地点</text>
+      </view>
+      <input
+        class="form-input"
         placeholder="在哪里度过这段时光？"
         value="{{location}}"
-        bind:change="onLocationChange"
+        bindinput="onLocationChange"
         maxlength="100"
       />
     </view>
 
     <!-- 图片上传 -->
     <view class="form-item">
-      <view class="form-label required">活动照片</view>
+      <view class="form-label">
+        <text class="label-emoji">📷</text>
+        <text class="label-text">照片</text>
+        <text class="required-mark">*</text>
+      </view>
       <t-upload
         mediaType="{{['image']}}"
         max="{{9}}"
         gridConfig="{{uploadGridConfig}}"
-        value="{{images}}"
-        bind:change="onUploadChange"
+        files="{{images}}"
+        bind:add="onUploadAdd"
+        bind:remove="onUploadRemove"
       />
-      <view class="form-tip">最多上传9张照片</view>
+      <view class="form-tip">☁️ 最多上传9张照片</view>
     </view>
 
     <!-- 参与人员 -->
     <view class="form-item">
-      <view class="form-label">参与人员</view>
-      <view class="participants-input">
-        <t-input
-          placeholder="输入姓名后点击添加"
-          value="{{participantInput}}"
-          bind:change="onParticipantInput"
-          confirmType="done"
-          bindconfirm="onAddParticipant"
-        />
-        <t-button size="small" variant="outline" bindtap="onAddParticipant" class="add-btn">添加</t-button>
+      <view class="form-label">
+        <text class="label-emoji">👥</text>
+        <text class="label-text">参与人</text>
       </view>
-      <view class="participants-list" wx:if="{{participants.length > 0}}">
-        <t-tag
-          wx:for="{{participants}}"
-          wx:key="index"
-          variant="light"
-          closable
-          bindclose="onRemoveParticipant"
-          data-index="{{index}}"
-          class="participant-tag"
+      <view class="participants-grid">
+        <view
+          class="participant-option {{item.selected ? 'selected' : ''}}"
+          wx:for="{{participantOptions}}"
+          wx:key="name"
+          bindtap="onToggleParticipant"
+          data-name="{{item.name}}"
         >
-          {{item}}
-        </t-tag>
+          <text class="option-emoji">{{item.emoji}}</text>
+          <text class="option-name">{{item.name}}</text>
+          <text class="option-check" wx:if="{{item.selected}}">✓</text>
+        </view>
       </view>
     </view>
 
@@ -126,15 +147,13 @@
 </scroll-view>
 
 <!-- 底部提交按钮 -->
-  <view class="submit-bar">
-    <t-button
-      theme="primary"
-      size="large"
-      bindtap="onSubmit"
-      loading="{{submitting}}"
-      disabled="{{submitting}}"
-      block
-    >
-      发布记录
-    </t-button>
+<view class="submit-bar">
+  <view class="submit-btn" bindtap="onSubmit" wx:if="{{!submitting}}">
+    <text class="submit-icon"></text>
+    <text class="submit-text">发布</text>
   </view>
+  <view class="submit-btn sending" wx:else>
+    <text class="submit-icon">🎀</text>
+    <text class="submit-text">发布中...</text>
+  </view>
+</view>

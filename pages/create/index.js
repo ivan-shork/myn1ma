@@ -1,5 +1,6 @@
 import { addMemoryRecord } from '../../services/memory/index';
 import dayjs from 'dayjs';
+import { requestUserNickname } from '../../utils/auth';
 
 Page({
   data: {
@@ -10,7 +11,15 @@ Page({
     location: '',
     images: [],
     participants: [],
-    participantInput: '',
+    participantOptions: [
+        { name: '直线', emoji: '🫧', selected: false },
+        { name: '鱼', emoji: '🐟', selected: false },
+        { name: '婷子', emoji: '🐰', selected: false },
+      { name: '阿包', emoji: '🍔', selected: false },
+      { name: '皮卡丘', emoji: '⚡', selected: false },
+      { name: '菠萝', emoji: '🍍', selected: false },
+      { name: '蜜蜂', emoji: '🐝', selected: false },
+    ],
     submitting: false,
     statusBarHeight: 0,
     uploadGridConfig: { column: 3 }
@@ -68,57 +77,53 @@ Page({
     });
   },
 
-  // 参与人员输入
-  onParticipantInput(e) {
-    this.setData({
-      participantInput: e.detail.value
-    });
-  },
+  // 切换参与人员
+  onToggleParticipant(e) {
+    const { name } = e.currentTarget.dataset;
+    const { participantOptions } = this.data;
 
-  // 添加参与人员
-  onAddParticipant() {
-    const { participantInput, participants } = this.data;
-    if (!participantInput.trim()) {
-      wx.showToast({
-        title: '请输入人员姓名',
-        icon: 'none'
-      });
-      return;
-    }
-    if (participants.includes(participantInput.trim())) {
-      wx.showToast({
-        title: '该人员已添加',
-        icon: 'none'
-      });
-      return;
-    }
-    this.setData({
-      participants: [...participants, participantInput.trim()],
-      participantInput: ''
+    const updatedOptions = participantOptions.map(option => {
+      if (option.name === name) {
+        return { ...option, selected: !option.selected };
+      }
+      return option;
     });
-  },
 
-  // 删除参与人员
-  onRemoveParticipant(e) {
-    const { index } = e.currentTarget.dataset;
-    const { participants } = this.data;
-    participants.splice(index, 1);
+    const participants = updatedOptions
+      .filter(option => option.selected)
+      .map(option => option.name);
+
     this.setData({
+      participantOptions: updatedOptions,
       participants
     });
   },
 
-  // 图片上传
-  onUploadChange(e) {
-    const { fileList } = e.detail;
+  // 图片添加
+  onUploadAdd(e) {
+    const { files } = e.detail;
+    console.log('图片添加:', files);
     this.setData({
-      images: fileList
+      images: [...this.data.images, ...files]
+    });
+  },
+
+  // 图片删除
+  onUploadRemove(e) {
+    const { index } = e.detail;
+    console.log('图片删除，索引:', index);
+    const images = [...this.data.images];
+    images.splice(index, 1);
+    this.setData({
+      images
     });
   },
 
   // 表单验证
   validateForm() {
     const { title, date, images } = this.data;
+
+    console.log('表单验证 - images:', images);
 
     if (!title.trim()) {
       wx.showToast({
@@ -136,7 +141,7 @@ Page({
       return false;
     }
 
-    if (images.length === 0) {
+    if (!images || images.length === 0) {
       wx.showToast({
         title: '请至少上传一张图片',
         icon: 'none'
@@ -149,11 +154,21 @@ Page({
 
   // 提交表单
   async onSubmit() {
+    console.log('=== 提交表单开始 ===');
+    console.log('当前数据:', {
+      title: this.data.title,
+      date: this.data.date,
+      images: this.data.images,
+      participants: this.data.participants
+    });
+
     if (!this.validateForm()) {
+      console.log('表单验证失败');
       return;
     }
 
     if (this.data.submitting) {
+      console.log('正在提交中，忽略');
       return;
     }
 
@@ -166,8 +181,13 @@ Page({
     });
 
     try {
+      // 获取用户昵称
+      const userNickname = await requestUserNickname();
+      console.log('用户昵称:', userNickname);
+
       // 获取图片云存储路径
       const imageUrls = this.data.images.map(img => img.url);
+      console.log('图片URL列表:', imageUrls);
 
       const recordData = {
         title: this.data.title.trim(),
@@ -177,12 +197,18 @@ Page({
         location: this.data.location.trim(),
         images: imageUrls,
         participants: this.data.participants,
-        creator: '我', // 后续可接入用户信息
+        creator: userNickname,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
-      await addMemoryRecord(recordData);
+      console.log('准备保存的记录数据:', recordData);
+      console.log('准备调用 addMemoryRecord...');
+      console.log('addMemoryRecord 函数:', addMemoryRecord);
+
+      const result = await addMemoryRecord(recordData);
+
+      console.log('addMemoryRecord 返回结果:', result);
 
       wx.hideLoading();
       wx.showToast({
