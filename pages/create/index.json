@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "新建活动",
+  "navigationStyle": "custom",
+  "componentFramework": "glass-easel",
+  "enablePullDownRefresh": false
+}

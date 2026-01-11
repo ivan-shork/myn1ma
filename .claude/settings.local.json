@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /d/workspace/myn1ma log --oneline --all -10)",
+      "Bash(git -C /d/workspace/myn1ma show 83cd9fc:pages/record/index.js)",
+      "Bash(git -C /d/workspace/myn1ma show e907ab4 --stat)",
+      "Bash(git -C /d/workspace/myn1ma diff 3e81e46 83cd9fc --name-status)",
+      "Bash(git -C /d/workspace/myn1ma show 83cd9fc:pages/detail/index.js)",
+      "Bash(git -C /d/workspace/myn1ma show 83cd9fc:pages/activity/eat/index.js)",
+      "Bash(git -C /d/workspace/myn1ma ls-tree -r --name-only 83cd9fc)"
+    ]
+  }
+}

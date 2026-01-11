@@ -1,27 +1,40 @@
 {
-  "pages": [
-    "pages/timeline/index",
-    "pages/record/index",
-    "pages/detail/index",
-    "pages/activity/eat/index",
-    "pages/activity/play/index",
-    "pages/activity/sight/index"
-  ],
-  "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "时光记录",
-    "navigationBarTextStyle": "black"
-  },
-  "sitemapLocation": "sitemap.json",
-  "style": "v2",
-  "renderer": "skyline",
-  "rendererOptions": {
-    "skyline": {
-      "defaultDisplayBlock": true,
-      "disableABTest": true,
-      "sdkVersionBegin": "3.0.0"
+    "pages": [
+      "pages/timeline/index",
+      "pages/create/index",
+      "pages/detail/index"
+    ],
+    "window": {
+      "backgroundTextStyle": "light",
+      "navigationBarBackgroundColor": "#fff",
+      "navigationBarTitleText": "时光记录",
+      "navigationBarTextStyle": "black"
+    },
+    "sitemapLocation": "sitemap.json",
+    "style": "v2",
+    "renderer": "skyline",
+    "rendererOptions": {
+      "skyline": {
+        "defaultDisplayBlock": true,
+        "disableABTest": true,
+        "sdkVersionBegin": "3.0.0"
+      }
+    },
+    "lazyCodeLoading": "requiredComponents",
+    "usingComponents": {
+      "t-icon": "tdesign-miniprogram/icon/icon",
+      "t-rate": "tdesign-miniprogram/rate/rate",
+      "t-upload": "tdesign-miniprogram/upload/upload",
+      "t-tag": "tdesign-miniprogram/tag/tag",
+      "t-cell": "tdesign-miniprogram/cell/cell",
+      "t-input": "tdesign-miniprogram/input/input",
+      "t-textarea": "tdesign-miniprogram/textarea/textarea",
+      "t-button": "tdesign-miniprogram/button/button",
+      "t-picker": "tdesign-miniprogram/picker/picker",
+      "t-toast": "tdesign-miniprogram/toast/toast",
+      "t-divider": "tdesign-miniprogram/divider/divider",
+      "t-image": "tdesign-miniprogram/image/image",
+      "t-empty": "tdesign-miniprogram/empty/empty"
     }
-  },
-  "lazyCodeLoading": "requiredComponents"
-}
+  }
+  

@@ -1,76 +1,150 @@
-<view class="container">
-  <view class="header">
-    <text class="title">时光记录详情</text>
+<!-- 自定义导航栏 -->
+<view class="nav-bar">
+  <view class="nav-status-bar" style="height: {{statusBarHeight}}px;"></view>
+  <view class="nav-title-area">
+    <view class="nav-back" bindtap="goBack">
+      <t-icon name="chevron-left" size="20" color="#fff" />
+    </view>
+    <view class="nav-title">活动详情</view>
   </view>
-  
-  <view class="memory-info">
-    <view class="info-row">
-      <text class="label">日期：</text>
-      <text class="value">{{memory.date}}</text>
+</view>
+
+<!-- 滚动内容区域 -->
+<scroll-view
+  class="detail-scroll-wrapper"
+  style="height: calc(100vh - {{statusBarHeight + 44}}px - 100rpx); top: {{statusBarHeight + 44}}px;"
+  scroll-y
+  wx:if="{{record}}"
+>
+  <view class="detail-page">
+
+    <!-- 图片轮播 -->
+    <view class="image-swiper-container">
+      <swiper
+        class="image-swiper"
+        indicator-dots
+        indicator-color="rgba(255,255,255,0.5)"
+        indicator-active-color="#fff"
+        bindchange="onImageChange"
+      >
+        <swiper-item wx:for="{{record.images}}" wx:key="index">
+          <image
+            class="swiper-image"
+            src="{{item}}"
+            mode="aspectFill"
+            bindtap="onPreviewImage"
+          />
+        </swiper-item>
+      </swiper>
+      <view class="image-counter">{{currentImageIndex + 1}} / {{record.images.length}}</view>
     </view>
-    
-    <view class="info-row">
-      <text class="label">地点：</text>
-      <text class="value">{{memory.place}}</text>
-    </view>
-    
-    <view class="info-row">
-      <text class="label">参与人员：</text>
-      <text class="value">{{memory.persons.join(', ')}}</text>
-    </view>
-    
-    <view class="info-row">
-      <text class="label">评分：</text>
-      <t-rate 
-        value="{{memory.rate}}" 
-        size="20" 
-        variant="filled" 
-        disabled
-      />
-    </view>
-  </view>
-  
-  <view class="activity-section">
-    <text class="section-title">相关活动</text>
-    <view class="activity-buttons">
-      <button class="activity-button" bindtap="goToActivity" data-type="eat">
-        <t-icon name="food" size="24" />
-        <text>吃饭</text>
-      </button>
-      <button class="activity-button" bindtap="goToActivity" data-type="play">
-        <t-icon name="game" size="24" />
-        <text>玩乐</text>
-      </button>
-      <button class="activity-button" bindtap="goToActivity" data-type="sight">
-        <t-icon name="map" size="24" />
-        <text>景点</text>
-      </button>
-    </view>
-  </view>
-  
-  <view class="comments-section">
-    <text class="section-title">评论</text>
-    <view class="comments-list">
-      <block wx:for="{{memory.comments}}" wx:key="index">
-        <view class="comment-item">
-          <view class="comment-header">
-            <text class="comment-name">{{item.name}}</text>
-          </view>
-          <view class="comment-content">
-            <text>{{item.content}}</text>
-          </view>
-          <view class="comment-actions">
-            <view class="action-item">
-              <t-icon name="thumb-up" size="16" />
-              <text>{{item.like}}</text>
-            </view>
-            <view class="action-item">
-              <t-icon name="thumb-down" size="16" />
-              <text>{{item.unlike}}</text>
-            </view>
-          </view>
+
+    <!-- 内容区域 -->
+    <view class="content-container">
+
+      <!-- 标题 -->
+      <view class="title-section">
+        <text class="title">{{record.title}}</text>
+      </view>
+
+      <!-- 时间地点信息 -->
+      <view class="info-section">
+        <view class="info-item" wx:if="{{record.date}}">
+          <t-icon name="time" size="18" color="#666" />
+          <text class="info-text">{{record.date}}</text>
+          <text class="info-text" wx:if="{{record.time}}">{{record.time}}</text>
         </view>
-      </block>
+        <view class="info-item" wx:if="{{record.location}}">
+          <t-icon name="location" size="18" color="#666" />
+          <text class="info-text">{{record.location}}</text>
+        </view>
+      </view>
+
+      <!-- 参与人员 -->
+      <view class="participants-section" wx:if="{{record.participants.length > 0}}">
+        <view class="section-title">参与人员</view>
+        <view class="participants-tags">
+          <t-tag
+            wx:for="{{record.participants}}"
+            wx:key="index"
+            variant="light"
+            size="medium"
+            class="participant-tag"
+          >
+            {{item}}
+          </t-tag>
+        </view>
+      </view>
+
+      <!-- 活动描述 -->
+      <view class="description-section" wx:if="{{record.description}}">
+        <view class="section-title">活动描述</view>
+        <text class="description-text">{{record.description}}</text>
+      </view>
+
+      <t-divider />
+
+      <!-- 评论区 -->
+      <view class="comments-section">
+        <view class="section-title">评论 ({{comments.length}})</view>
+
+        <!-- 评论列表 -->
+        <view class="comments-list">
+          <view
+            class="comment-item"
+            wx:for="{{comments}}"
+            wx:key="_id"
+          >
+            <view class="comment-header">
+              <text class="comment-author">{{item.author}}</text>
+              <text class="comment-time">{{item.time}}</text>
+            </view>
+            <text class="comment-content">{{item.content}}</text>
+            <view class="comment-actions">
+              <view
+                class="like-btn"
+                bindtap="onLikeComment"
+                data-index="{{index}}"
+              >
+                <t-icon name="heart" size="16" color="#999" />
+                <text class="like-count">{{item.likes || 0}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 空状态 -->
+          <t-empty wx:if="{{comments.length === 0}}" description="暂无评论，快来抢沙发~" />
+        </view>
+      </view>
+
     </view>
   </view>
+</scroll-view>
+
+<!-- 底部评论输入 -->
+<view class="comment-bar">
+  <view class="comment-input-wrapper">
+    <input
+      class="comment-input"
+      placeholder="说点什么..."
+      value="{{commentInput}}"
+      bindinput="onCommentInput"
+      confirm-type="send"
+      bindconfirm="onSubmitComment"
+    />
+    <t-button
+      size="small"
+      theme="primary"
+      bindtap="onSubmitComment"
+      disabled="{{!commentInput || submitting}}"
+      loading="{{submitting}}"
+    >
+      发送
+    </t-button>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-page" wx:if="{{!record}}" style="padding-top: {{statusBarHeight + 44}}px;">
+  <t-loading />
 </view>

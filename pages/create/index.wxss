@@ -1,0 +1,128 @@
+/* 自定义导航栏 */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #fff;
+}
+
+.nav-status-bar {
+  width: 100%;
+}
+
+.nav-title-area {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.nav-back {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  margin: -8px;
+}
+
+.nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+}
+
+.create-scroll-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #f5f5f5;
+}
+
+.create-page {
+  background: #f5f5f5;
+}
+
+.form-container {
+  padding: 24rpx;
+}
+
+.form-item {
+  background: #fff;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  border-radius: 16rpx;
+}
+
+.form-item-row {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.form-item-half {
+  flex: 1;
+  background: #fff;
+  padding: 24rpx;
+  border-radius: 16rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.form-label.required::before {
+  content: '*';
+  color: #e34d59;
+  margin-right: 4rpx;
+}
+
+.form-tip {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 12rpx;
+}
+
+.picker-value {
+  font-size: 28rpx;
+  color: #333;
+  padding: 10rpx 0;
+}
+
+.participants-input {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.add-btn {
+  flex-shrink: 0;
+}
+
+.participants-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.participant-tag {
+  font-size: 28rpx;
+}
+
+.submit-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx;
+  background: #fff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+}

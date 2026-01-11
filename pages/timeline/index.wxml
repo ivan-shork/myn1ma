@@ -1,32 +1,51 @@
-<view class="container">
- 
+<!-- 沉浸式：隐藏导航栏 -->
+<scroll-view
+  class="timeline-scroll-wrapper"
+  scroll-y
+>
+  <view class="container">
+  <!-- 顶部装饰云朵 -->
+  <view class="cloud-decoration">
+    <view class="cloud cloud-1">☁️</view>
+    <view class="cloud cloud-2">☁️</view>
+  </view>
 
-  <view class="timeline-container">
-    <block wx:for="{{memories}}" wx:key="id">
-      <view class="timeline-item">
-        <view class="timeline-line" wx:if="{{index !== memories.length - 1}}"></view>
-        <view class="timeline-dot"></view>
-        <view class="memory-content">
-          <view class="memory-date">{{item.date}}</view>
-          <view class="memory-item" bindtap="goToDetail" data-id="{{item.id}}">
-            <view class="card-content">
-              <image class="memory-image" src="{{item.thumbnail}}" mode="aspectFill"></image>
-              <view class="memory-info">
-                <view class="info-row">
-                  <text class="place">{{item.place}}</text>
-                </view>
-                <view class="info-row">
-                  <text class="persons">参与者: {{item.persons}}</text>
-                </view>
-                <view class="info-row">
-                  <t-rate 
-                    value="{{item.rate}}" 
-                    size="16" 
-                    variant="filled" 
-                    disabled
-                  />
-                </view>
-              </view>
+  <!-- 时光线列表 -->
+  <view class="timeline-container" wx:if="{{!loading && memories.length > 0}}">
+    <block wx:for="{{memories}}" wx:key="_id">
+      <view class="timeline-item" bindtap="goToDetail" data-id="{{item._id}}">
+        <view class="memory-card">
+          <!-- 卡片装饰星星 -->
+          <view class="card-star star-1">⭐</view>
+          <view class="card-star star-2">✨</view>
+
+          <!-- 图片区域 -->
+          <view class="card-image-wrapper">
+            <image class="card-image" src="{{item.images[0]}}" mode="aspectFill"></image>
+            <view class="image-shadow"></view>
+          </view>
+
+          <!-- 内容区域 -->
+          <view class="card-body">
+            <view class="card-title">{{item.title}}</view>
+
+            <view class="card-meta" wx:if="{{item.date}}">
+              <text class="meta-icon">📅</text>
+              <text class="meta-text">{{item.date}}</text>
+            </view>
+
+            <view class="card-meta" wx:if="{{item.location}}">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.location}}</text>
+            </view>
+
+            <view class="card-meta" wx:if="{{item.participants.length > 0}}">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">{{item.participants.join('、')}}</text>
+            </view>
+
+            <view class="card-desc" wx:if="{{item.description}}">
+              {{item.description}}
             </view>
           </view>
         </view>
@@ -34,7 +53,25 @@
     </block>
   </view>
 
-  <view class="add-button" bindtap="goToAdd">
-    <t-icon name="add" size="24" color="#fff" />
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && memories.length === 0}}">
+    <view class="empty-icon">🌸</view>
+    <view class="empty-title">还没有记录哦</view>
+    <view class="empty-desc">点击右下角按钮，开始记录美好时光吧~</view>
   </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-icon">🎀</view>
+    <view class="loading-text">加载中...</view>
+  </view>
+  </view>
+</scroll-view>
+
+<!-- 新建按钮 -->
+<view class="add-button" bindtap="goToAdd">
+  <view class="add-btn-inner">
+    <text class="add-icon">✏️</text>
+  </view>
+  <view class="add-btn-shadow"></view>
 </view>

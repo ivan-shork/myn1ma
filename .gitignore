@@ -41,3 +41,8 @@ logs/
 # 如果使用构建工具
 dist/
 build/
+
+# Mock 数据（本地测试数据，避免提交）
+services/mock/memory-records.js
+services/mock/comments.js
+!services/mock/.gitkeep
